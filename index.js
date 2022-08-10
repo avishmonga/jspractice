@@ -19,7 +19,7 @@ callDelay(3, greet);
 
 // api calls
 
-const api = (url, callback) => {
+function api (url, callback){
   fetch(url)
     .then((res) => {
       if (!res.ok) throw Error("something went wrong");
@@ -66,9 +66,8 @@ api("https://jsonplaceholder.typicode.com/posts", (err, response) => {
 });
 
 // Async Series
-function fun() {}
 
-fun.prototype.Series =(arr, callback)=> {
+api.prototype.Series =(arr, callback)=> {
   let i = 0;
 
   const rec = (i) => {
@@ -86,7 +85,7 @@ fun.prototype.Series =(arr, callback)=> {
   rec(i);
 };
 
-fun.prototype.Parallel = (arr,callback)=>{
+api.prototype.Parallel = (arr,callback)=>{
   let i = 0;
   while (i < arr.length) {
     let flag = true;
@@ -101,7 +100,7 @@ fun.prototype.Parallel = (arr,callback)=>{
   }
 }
 
-const Api = new fun();
+const Api = new api();
 
 
 
