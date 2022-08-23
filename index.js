@@ -19,7 +19,7 @@ callDelay(3, greet);
 
 // api calls
 
-function api (url, callback){
+function api(url, callback) {
   fetch(url)
     .then((res) => {
       if (!res.ok) throw Error("something went wrong");
@@ -31,9 +31,9 @@ function api (url, callback){
     .catch((error) => {
       callback(error);
     });
-};
+}
 
-//calling in Series....
+// calling in Series....
 api("https://jsonplaceholder.typicode.com/photos", (err, response) => {
   if (err) {
     console.log(err);
@@ -50,13 +50,13 @@ api("https://jsonplaceholder.typicode.com/photos", (err, response) => {
 });
 
 // calling in parallel
-api("https://jsonplaceholder.typicode.com/photos" , (err,response)=>{
+api("https://jsonplaceholder.typicode.com/photos", (err, response) => {
   if (err) {
     console.log(err);
   } else {
     console.log(response);
   }
-})
+});
 api("https://jsonplaceholder.typicode.com/posts", (err, response) => {
   if (err) {
     console.log(err);
@@ -85,14 +85,20 @@ api.prototype.Series =(arr, callback)=> {
   rec(i);
 };
 
+// Async Parallel
 api.prototype.Parallel = (arr,callback)=>{
   let i = 0;
+  let results = []
   while (i < arr.length) {
     let flag = true;
-    arr[i]((err) => {
+    arr[i]((err , res) => {
+      console.log("err" , err)
+      console.log("res" , res)
       if (err) {
         callback(err);
         flag = false;
+      }else{
+        results.push(res)
       }
     });
     i++;
@@ -102,52 +108,47 @@ api.prototype.Parallel = (arr,callback)=>{
 
 const Api = new api();
 
-
-
-
 Api.Series(
   [
     function (callback) {
       setTimeout(() => {
         console.log("2sec");
-        callback(null);
+        callback(null , 1);
       }, 3000);
     },
     function (callback) {
       console.log("0sec");
-      callback(null);
+      callback(null , 2);
     },
     function (callback) {
       setTimeout(()=>{
         console.log("1sec")
-        callback(null);
+        callback(null , 3);
       },1000)
 
     },
   ],
-  function (err) {
+  function (err , results) {
     console.log("err", err);
   }
 );
-
-
 
 Api.Parallel(
   [
     function (callback) {
       setTimeout(() => {
         console.log("2sec");
-        callback(null);
+        callback(null,1);
       }, 3000);
     },
     function (callback) {
       console.log("0sec");
-      callback(null);
+      callback(null,2);
     },
     function (callback) {
       setTimeout(()=>{
         console.log("1sec")
-        callback(null);
+        callback(null,3);
       },1000)
 
     },
@@ -156,3 +157,58 @@ Api.Parallel(
     console.log("err", err);
   }
 );
+
+let myPromise = new Promise(function(resolve, reject) {
+  setTimeout(()=>{
+    resolve('error aaya')
+  },2000)
+  
+  });
+
+  console.log(myPromise)
+
+ myPromise.then(()=>{
+  console.log('fulfil hogya')
+ })
+
+const apiPromise = (url) => {
+  return new Promise((resolve, reject) => {
+    api(url, (err, response) => {
+      if (err) {
+        reject(err)
+        console.log(err);
+      } else {
+        resolve(response)
+      }
+    });
+  });
+};
+// Promise in Series
+apiPromise("https://jsonplaceholder.typicode.com/photos").then((a)=>{
+console.log("a1" , a)
+apiPromise("https://jsonplaceholder.typicode.com/photos").then((a)=>{
+  console.log("a2" , a)
+  return a
+})
+})
+
+// Promise in Parallel
+
+Promise.all([
+  apiPromise("https://jsonplaceholder.typicode.com/photos"),
+  apiPromise("https://jsonplaceholder.typicode.com/photos"),
+]).then((a)=>{
+  console.log("ap" , a)
+})
+
+
+// Promise 2 Parallel and 1 After that
+Promise.all([
+  apiPromise("https://jsonplaceholder.typicode.com/photos"),
+  apiPromise("https://jsonplaceholder.typicode.com/photos"),
+]).then((a)=>{
+  console.log("ap" , a)
+  apiPromise("https://jsonplaceholder.typicode.com/photos").then((a2)=>{
+    console.log("a3",a2)
+  })
+})

@@ -5,10 +5,45 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test</title>
-    <script src="./index.js"></script>
+    
 </head>
+<style>
+    .green{
+        color: green;
+    }
+    .red{
+        color: red;
+    }
+    .blue{
+        color: blue;
+    }
+    .black{
+        color: black;
+    }
+</style>
 <body>
     <h1>Hello Welcome to testing world............</h1>
+
+    <form id="inputForm">
+        <input id="inputText" type="text" placeholder="Enter Text Here"  />
+        <select id="inputColor">
+            <option value="">Choose Color Here</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="red">Red</option>
+            <option value="black">Black</option>
+        </select>
+        <button type="submit" onclick="addData(event)" id="addBtn">ADD</button>
+
+    </form>
+
+    <button onclick="filterData()">FilterMe</button>
+
+
+    <div id="container">
+    </div>
     
 </body>
 </html>
+
+<script src="./index.js"></script>
