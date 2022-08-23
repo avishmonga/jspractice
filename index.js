@@ -86,90 +86,98 @@ api.prototype.Series =(arr, callback)=> {
 };
 
 // Async Parallel
-api.prototype.Parallel = (arr,callback)=>{
-  let i = 0;
+api.prototype.parallel = (arr,callback)=>{
+  let c = 0;
   let results = []
-  while (i < arr.length) {
+  for(let i=0; i<arr.length; i++){
     let flag = true;
+    
     arr[i]((err , res) => {
-      console.log("err" , err)
-      console.log("res" , res)
       if (err) {
         callback(err);
         flag = false;
       }else{
-        results.push(res)
+       
+        console.log("i" , i)
+        c++
+        console.log("c" , c)
+        results[i] = res
+        console.log("res" ,results)
+        if(c===arr.length){
+          callback(null , results)
+        }
       }
     });
-    i++;
     if (!flag) break;
   }
+
 }
 
 const Api = new api();
 
-Api.Series(
+// Api.Series(
+//   [
+//     function (callback) {
+//       setTimeout(() => {
+//         console.log("2sec");
+//         callback(null , 1);
+//       }, 3000);
+//     },
+//     function (callback) {
+//       console.log("0sec");
+//       callback(null , 2);
+//     },
+//     function (callback) {
+//       setTimeout(()=>{
+//         console.log("1sec")
+//         callback(null , 3);
+//       },1000)
+
+//     },
+//   ],
+//   function (err , results) {
+//     console.log("err", err);
+//   }
+// );
+
+Api.parallel(
   [
     function (callback) {
       setTimeout(() => {
         console.log("2sec");
-        callback(null , 1);
-      }, 3000);
-    },
-    function (callback) {
-      console.log("0sec");
-      callback(null , 2);
-    },
-    function (callback) {
-      setTimeout(()=>{
-        console.log("1sec")
-        callback(null , 3);
-      },1000)
-
-    },
-  ],
-  function (err , results) {
-    console.log("err", err);
-  }
-);
-
-Api.Parallel(
-  [
-    function (callback) {
-      setTimeout(() => {
-        console.log("2sec");
-        callback(null,1);
-      }, 3000);
-    },
-    function (callback) {
-      console.log("0sec");
-      callback(null,2);
-    },
-    function (callback) {
-      setTimeout(()=>{
-        console.log("1sec")
         callback(null,3);
+      }, 3000);
+    },
+    function (callback) {
+      console.log("0sec");
+      callback(null,0);
+    },
+    function (callback) {
+      setTimeout(()=>{
+        console.log("1sec")
+        callback(null,1);
       },1000)
 
     },
   ],
-  function (err) {
+  function (err , res) {
     console.log("err", err);
+    console.log(res)
   }
 );
 
-let myPromise = new Promise(function(resolve, reject) {
-  setTimeout(()=>{
-    resolve('error aaya')
-  },2000)
+// let myPromise = new Promise(function(resolve, reject) {
+//   setTimeout(()=>{
+//     resolve('error aaya')
+//   },2000)
   
-  });
+//   });
 
-  console.log(myPromise)
+//   console.log(myPromise)
 
- myPromise.then(()=>{
-  console.log('fulfil hogya')
- })
+//  myPromise.then(()=>{
+//   console.log('fulfil hogya')
+//  })
 
 const apiPromise = (url) => {
   return new Promise((resolve, reject) => {
@@ -183,7 +191,7 @@ const apiPromise = (url) => {
     });
   });
 };
-// Promise in Series
+// // Promise in Series
 apiPromise("https://jsonplaceholder.typicode.com/photos").then((a)=>{
 console.log("a1" , a)
 apiPromise("https://jsonplaceholder.typicode.com/photos").then((a)=>{
@@ -192,7 +200,7 @@ apiPromise("https://jsonplaceholder.typicode.com/photos").then((a)=>{
 })
 })
 
-// Promise in Parallel
+// // Promise in Parallel
 
 Promise.all([
   apiPromise("https://jsonplaceholder.typicode.com/photos"),
@@ -202,7 +210,7 @@ Promise.all([
 })
 
 
-// Promise 2 Parallel and 1 After that
+// // Promise 2 Parallel and 1 After that
 Promise.all([
   apiPromise("https://jsonplaceholder.typicode.com/photos"),
   apiPromise("https://jsonplaceholder.typicode.com/photos"),
